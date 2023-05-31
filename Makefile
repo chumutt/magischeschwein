@@ -1,4 +1,4 @@
-LISP ?= sbcl
+LISP ?= ros -Q run
 
 all: test
 
