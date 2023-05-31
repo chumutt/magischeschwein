@@ -18,7 +18,8 @@
     (help)
     (uiop:quit))
   (greet  (or (first argv)
-              "dear lisp user")))
+              "dear lisp user"))
+  (uiop:quit))
 
 (defun main ()
   "Entry point for the executable.
