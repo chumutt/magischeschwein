@@ -2,9 +2,6 @@
 
 ;; Define your project functionality here...
 
-(defun greet (&optional (name "Chu the Pup"))
-  (format t "Hello ~a from ~a!~&" name "magischeschwein"))
-
 (defun help ()
   (format t "~&Usage:
 
@@ -17,8 +14,6 @@
     ;; clingon, unix-opts, defmain, adopt… when needed.
     (help)
     (uiop:quit))
-  (greet  (or (first argv)
-              "dear lisp user"))
   (uiop:quit))
 
 (defun main ()
