@@ -2,8 +2,9 @@
 
 ;; Define your project functionality here...
 
-(defun strip-csv-headers (file)
-  (princ (uiop:read-file-string (merge-pathnames (car file) (uiop/os:getcwd)))))
+(defun slurp-file (file)
+  (princ (subseq (uiop:read-file-lines (merge-pathnames (car file) (uiop/os:getcwd))) 4)))
+
 
 (defun help ()
   (format t "~&Usage:
@@ -17,7 +18,7 @@
     ;; clingon, unix-opts, defmain, adopt… when needed.
     (help)
     (uiop:quit))
-  (strip-csv-headers argv)
+  (slurp-file argv)
   (uiop:quit))
 
 (defun main ()
