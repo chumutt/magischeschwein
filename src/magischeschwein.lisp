@@ -2,10 +2,8 @@
 
 ;; Define your project functionality here...
 
-(defun read-csv-file (filename)
-  (uiop:with-input-file (stream filename)
-    (loop for line = (read-line stream nil)
-          while line do (format t "~a~%" line))))
+(defun strip-csv-headers (file)
+  (princ (uiop:read-file-string (merge-pathnames (car file) (uiop/os:getcwd)))))
 
 (defun help ()
   (format t "~&Usage:
@@ -19,7 +17,7 @@
     ;; clingon, unix-opts, defmain, adopt… when needed.
     (help)
     (uiop:quit))
-  (read-csv-file argv)
+  (strip-csv-headers argv)
   (uiop:quit))
 
 (defun main ()
