@@ -2,10 +2,18 @@
 
 ;; Define your project functionality here...
 
-(defparameter *new-headers* '("test,test,test,test"))
+(defparameter *new-headers* '("date,payee,account,amount,currency,description"))
 
 (defun test-read-in-pathname ()
   (cl-csv:read-csv #P"/home/chu/.local/share/roswell/local-projects/chus/magischeschwein/tests/example-input-file.csv"))
+
+(defun remove-last-strings ()
+  (mapcar #'butlast
+          (mapcar #'butlast
+                  (mapcar #'butlast (remove-first-string-over-list)))))
+
+(defun remove-first-string-over-list ()
+  (mapcar #'cdr (grab-sans-headers)))
 
 (defun grab-sans-headers ()
   (cddddr (test-read-in-pathname)))
