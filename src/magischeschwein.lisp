@@ -2,12 +2,22 @@
 
 ;; Define your project functionality here...
 
-(defun slurp-file (file)
-  (princ (subseq (uiop:read-file-lines (merge-pathnames (car file) (uiop/os:getcwd))) 4)))
+(defparameter *new-headers* '("test,test,test,test"))
 
+(defun test-read-in-pathname ()
+  (cl-csv:read-csv #P"/home/chu/.local/share/roswell/local-projects/chus/magischeschwein/tests/example-input-file.csv"))
+
+(defun grab-sans-headers ()
+  (cddddr (test-read-in-pathname)))
+
+(defun put-new-headers ()
+  (cons *new-headers* (grab-sans-headers)))
+
+(defun slurp-pathname (pathname)
+  (uiop:read-file-lines (merge-pathnames (car pathname) (uiop/os:getcwd))))
 
 (defun help ()
-  (format t "~&Usage:
+  (format T "~&Usage:
 
   magischeschwein [name]~&"))
 
@@ -18,7 +28,7 @@
     ;; clingon, unix-opts, defmain, adopt… when needed.
     (help)
     (uiop:quit))
-  (slurp-file argv)
+  (slurp-pathname argv)
   (uiop:quit))
 
 (defun main ()
