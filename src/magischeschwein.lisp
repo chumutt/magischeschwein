@@ -1,5 +1,14 @@
 (in-package :magischeschwein)
 
+;; Testing start
+
+(defparameter *test-pathname* '("../tests/example-input-file.csv"))
+
+(defun test ()
+  (commence-with *test-pathname*))
+
+;; Testing end
+
 ;; Define your project functionality here...
 
 (defparameter *new-headers* '("date,desc,note,debit,credit,,checkno,fees"))
@@ -24,15 +33,6 @@
     (remove-first-row
      (remove-first-row
       (slurp-pathname argv))))))
-
-;; Testing start
-
-(defparameter *test-pathname* '("../tests/example-input-file.csv"))
-
-(defun test ()
-  (commence-with *test-pathname*))
-
-;; Testing end
 
 (defun help ()
   (format T "~&Usage:
