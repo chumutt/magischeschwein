@@ -2,23 +2,28 @@
 
 ;; Define your project functionality here...
 
-(defparameter *new-headers* '("date,payee,account,amount,currency,description"))
+(defparameter *new-headers* '("date,desc,note,debit,credit,,checkno,fees"))
 
 (defun slurp-pathname (pathname)
-  (with-open-file (str (car pathname) :direction :input)
+  (with-open-file (str (car pathname)
+                       :direction :input)
     (cl-csv:read-csv str)))
 
 (defun put-new-headers (seq)
   (cons *new-headers* seq))
 
-(defun remove-first-string-over-list (seq)
+(defun remove-first-column (seq)
   (mapcar #'cdr seq))
 
-(defun grab-sans-headers (seq)
+(defun remove-first-row (seq)
   (cddddr seq))
 
 (defun commence-with (argv)
-  (slurp-pathname argv))
+  (put-new-headers
+   (remove-first-column
+    (remove-first-row
+     (grab-sans-headers
+      (slurp-pathname argv))))))
 
 (defun test ()
   (commence-with '("../tests/example-input-file.csv")))
