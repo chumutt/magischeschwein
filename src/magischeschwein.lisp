@@ -22,11 +22,17 @@
   (put-new-headers
    (remove-first-column
     (remove-first-row
-     (grab-sans-headers
+     (remove-first-row
       (slurp-pathname argv))))))
 
+;; Testing start
+
+(defparameter *test-pathname* '("../tests/example-input-file.csv"))
+
 (defun test ()
-  (commence-with '("../tests/example-input-file.csv")))
+  (commence-with *test-pathname*))
+
+;; Testing end
 
 (defun help ()
   (format T "~&Usage:
