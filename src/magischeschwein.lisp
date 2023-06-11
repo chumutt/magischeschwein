@@ -2,32 +2,32 @@
 
 ;; Define your project functionality here...
 
-(defparameter *input-headers* (cl-csv:read-csv #P"../tests/headers.csv")
+(defparameter *input-headers* (car (cl-csv:read-csv #P"../tests/headers.csv"))
   "Contains the new (ledger-cli compatible) headers.")
 
-(defparameter *input-table* (cl-csv:read-csv #P"../tests/example-input-file.csv")
-  "Contains the original table in list form.")
+(defparameter *input-table* (mapcar #'cdr (cddddr (cl-csv:read-csv #P"../tests/example-input-file.csv")))
+  "Contains the original table (the csv file to be inputted) in list form with the original header rows removed and the first column of values (transaction ids) removed as well.")
 
-(defun slurp-pathname (pathname)
-  (with-open-file (str (car pathname)
-                       :direction :input)
-    (cl-csv:read-csv str)))
+;; (defun slurp-pathname (pathname)
+;;   (with-open-file (str (car pathname)
+;;                        :direction :input)
+;;     (cl-csv:read-csv str)))
 
-(defun put-new-headers (seq)
-  (cons *input-headers* seq))
+;; (defun put-new-headers (seq)
+;;   (cons *input-headers* seq))
 
-(defun remove-first-column (seq)
-  (mapcar #'cdr seq))
+;; (defun remove-first-column (seq)
+;;   (mapcar #'cdr seq))
 
-(defun remove-first-row (seq)
-  (cddddr seq))
+;; (defun remove-first-row (seq)
+;;   (cddddr seq))
 
-(defun commence-with (argv)
-  (put-new-headers
-   (remove-first-column
-    (remove-first-row
-     (remove-first-row
-      (slurp-pathname argv))))))
+;; (defun commence-with (argv)
+;;   (put-new-headers
+;;    (remove-first-column
+;;     (remove-first-row
+;;      (remove-first-row
+;;       (slurp-pathname argv))))))
 
 (defun help ()
   (format T "~&Usage:
