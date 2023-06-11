@@ -8,6 +8,13 @@
 (defun test ()
   (commence-with *test-pathname*))
 
+(defun barf-csv-test (pathname)
+  (with-open-file (file (car pathname)
+                       :direction :output
+                       :if-exists :supersede
+                       :if-does-not-exist :create)
+    (write-sequence (test) file)))
+
 ;; Testing end
 
 ;; Define your project functionality here...
@@ -19,12 +26,6 @@
                        :direction :input)
     (cl-csv:read-csv str)))
 
-(defun barf-csv (pathname)
-  (with-open-file (file (car pathname)
-                       :direction :output
-                       :if-exists :supersede
-                       :if-does-not-exist :create)
-    (write-sequence (test) file)))
 
 (defun put-new-headers (seq)
   (cons *new-headers* seq))
