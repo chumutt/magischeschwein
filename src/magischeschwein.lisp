@@ -3,6 +3,7 @@
 ;; Testing start
 
 (defparameter *test-pathname* '("../tests/example-input-file.csv"))
+(defparameter *test-output-pathname* '("../tests/example-output-file.csv"))
 
 (defun test ()
   (commence-with *test-pathname*))
@@ -11,12 +12,19 @@
 
 ;; Define your project functionality here...
 
-(defparameter *new-headers* '("date,desc,note,debit,credit,,checkno,fees"))
+(defparameter *new-headers* '("date,payee,note,debit,credit,,code,"))
 
 (defun slurp-pathname (pathname)
   (with-open-file (str (car pathname)
                        :direction :input)
     (cl-csv:read-csv str)))
+
+(defun barf-csv (pathname)
+  (with-open-file (file (car pathname)
+                       :direction :output
+                       :if-exists :supersede
+                       :if-does-not-exist :create)
+    (write-sequence (test) file)))
 
 (defun put-new-headers (seq)
   (cons *new-headers* seq))
