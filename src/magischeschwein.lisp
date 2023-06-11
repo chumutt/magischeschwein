@@ -1,18 +1,12 @@
 (in-package :magischeschwein)
 
-;; Testing start
-
-(defparameter *test-pathname* '("../tests/example-input-file.csv"))
-(defparameter *test-output-pathname* '("../tests/example-output-file.csv"))
-
-(defun test ()
-  (commence-with *test-pathname*))
-
-;; Testing end
-
 ;; Define your project functionality here...
 
-(defparameter *new-headers* '("date,payee,note,debit,credit,,code,"))
+(defparameter *input-headers* (cl-csv:read-csv #P"../tests/headers.csv")
+  "Contains the new (ledger-cli compatible) headers.")
+
+(defparameter *input-table* (cl-csv:read-csv #P"../tests/example-input-file.csv")
+  "Contains the original table in list form.")
 
 (defun slurp-pathname (pathname)
   (with-open-file (str (car pathname)
@@ -20,7 +14,7 @@
     (cl-csv:read-csv str)))
 
 (defun put-new-headers (seq)
-  (cons *new-headers* seq))
+  (cons *input-headers* seq))
 
 (defun remove-first-column (seq)
   (mapcar #'cdr seq))
