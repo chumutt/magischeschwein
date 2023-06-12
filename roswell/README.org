@@ -1,0 +1,50 @@
+** How to use Roswell to build and share binaries
+:PROPERTIES:
+:CUSTOM_ID: how-to-use-roswell-to-build-and-share-binaries
+:END:
+From the project root:
+
+Run as a script:
+
+#+begin_example
+chmod +x roswell/magischeschwein.ros
+./roswell/magischeschwein.ros
+#+end_example
+
+Build a binary:
+
+#+begin_example
+ros build roswell/magischeschwein.ros
+#+end_example
+
+and run it:
+
+#+begin_example
+./roswell/magischeschwein
+#+end_example
+
+Or install it in ~/.roswell/bin:
+
+#+begin_example
+ros install roswell/magischeschwein.ros
+#+end_example
+
+It creates the binary in ~/.roswell/bin/ Run it:
+
+#+begin_example
+~/.roswell/bin/magischeschwein [name]~&
+#+end_example
+
+Your users can install the script with ros install LISP
+user/magischeschwein
+
+Use =+Q= if you don't have Quicklisp dependencies to save startup time.
+Use =ros build --disable-compression= to save on startup time and loose
+on application size.
+
+** See
+:PROPERTIES:
+:CUSTOM_ID: see
+:END:
+- https://github.com/roswell/roswell/wiki/
+- https://github.com/roswell/roswell/wiki/Reducing-Startup-Time
