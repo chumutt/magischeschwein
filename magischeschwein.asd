@@ -10,12 +10,12 @@
   :source-control (:git "")
 
   ;; Dependencies.
-  :depends-on ("cl-csv")
+  :depends-on (:cl-csv)
 
   ;; Project stucture.
-  :serial t
+  :serial T
   :components ((:module "src"
-                        :serial t
+                        :serial T
                         :components ((:file "packages")
                                      (:file "magischeschwein"))))
 
