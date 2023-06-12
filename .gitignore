@@ -37,6 +37,3 @@ tramp
 
 # cask packages
 .cask/
-
-# Sensitive information
-/tests/example-input-file.csv
