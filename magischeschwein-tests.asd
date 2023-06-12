@@ -7,7 +7,7 @@
                :fiveam
                :cl-csv
                :clingon)
-  :license "BSD"
+  :license "GNU GPL-3.0"
   :serial t
   :components ((:module "tests"
                         :serial t
