@@ -18,7 +18,6 @@ the original header rows removed and the first column of values (transaction ids
 (defun barf-test ()
   (cl-csv:write-csv *output-table* :stream #P"../tests/example-output-file.csv"))
 
-;; The naming with a "/" is just our convention.
 (defun cli/options ()
   "Returns a list of options for our main command"
   (list
@@ -32,8 +31,8 @@ the original header rows removed and the first column of values (transaction ids
     :description "Name to greet"
     :short-name #\n
     :long-name "name"
-    :env-vars '("USER")     ;; <-- takes this default value if the env var exists.
-    :initial-value "lisper" ;; <-- default value if nothing else is set.
+    :env-vars '("USER")
+    :initial-value "lisper"
     :key :name)))
 
 (defun cli/command ()
@@ -41,19 +40,20 @@ the original header rows removed and the first column of values (transaction ids
   (clingon:make-command
    :name "hello"
    :description "say hello"
-   :version "0.0.0"
-   :authors '("John Doe <john.doe@example.org")
-   :license "BSD 2-Clause"
-   :options (cli/options) ;; <-- our options
-   :handler #'cli/handler))  ;; <--  to change. See below.
+   :version "0.0.1"
+   :authors '("Chu the Pup <chufilthymutt@gmail.com>")
+   :license "GNU GPL-3.0"
+   :options (cli/options)
+   :handler #'cli/handler))
 
 (defun cli/handler (cmd)
   "The handler function of our top-level command"
   (let ((free-args (clingon:command-arguments cmd))
-        (name (clingon:getopt cmd :name)))  ;; <-- using the option's :key
+        (name (clingon:getopt cmd :name)))
     (format t "Hello, ~a!~%" name)
     (format t "You have provided ~a more free arguments~%" (length free-args))
-    (format t "Bye!~%")))
+    (format t "Bye!~%")
+    (uiop:quit)))
 
 (defun main ()
   "Entry point for the executable.
