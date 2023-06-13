@@ -35,6 +35,15 @@ the original header rows removed and the first column of values (transaction ids
     :initial-value "lisper"
     :key :name)))
 
+(defun cli/handler (cmd)
+  "The handler function of our top-level command"
+  (let ((free-args (clingon:command-arguments cmd))
+        (name (clingon:getopt cmd :name)))
+    (format t "Hello, ~a!~%" name)
+    (format t "You have provided ~a more free arguments~%" (length free-args))
+    (format t "Bye!~%")
+    (uiop:quit)))
+
 (defun cli/command ()
   "A command to say hello to someone"
   (clingon:make-command
@@ -45,15 +54,6 @@ the original header rows removed and the first column of values (transaction ids
    :license "GNU GPL-3.0"
    :options (cli/options)
    :handler #'cli/handler))
-
-(defun cli/handler (cmd)
-  "The handler function of our top-level command"
-  (let ((free-args (clingon:command-arguments cmd))
-        (name (clingon:getopt cmd :name)))
-    (format t "Hello, ~a!~%" name)
-    (format t "You have provided ~a more free arguments~%" (length free-args))
-    (format t "Bye!~%")
-    (uiop:quit)))
 
 (defun main ()
   "Entry point for the executable.
