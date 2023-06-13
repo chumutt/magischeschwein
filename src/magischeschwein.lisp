@@ -1,62 +1,57 @@
 (in-package :magischeschwein)
 
-;; Define your project functionality here...
+(defun shout/handler (cmd)
+  (let ((args (mapcar #'string-upcase (clingon:command-arguments cmd)))
+        (user (clingon:getopt cmd :user)))
+    (format T "HEY, ~A!~%" user)
+    (format T "~A!~%" (clingon:join-list args #\SPACE))))
 
-(defparameter *input-headers* (car (cl-csv:read-csv #P"/home/chu/.local/share/roswell/local-projects/chus/magischeschwein/tests/headers.csv"))
-  "Contains the new (ledger-cli compatible) headers.")
+(defun shout/command ()
+  (clingon:make-command
+    :name "shout"
+    :description "shouts back things you write"
+    :usage "[options] [arguments ...]"
+    :handler #'shout/handler))
 
-(defparameter *input-table*
-  (mapcar #'cdr (cddddr (cl-csv:read-csv #P"/home/chu/.local/share/roswell/local-projects/chus/magischeschwein/tests/example-input-file.csv")))
-  "Contains the original table (the csv file to be inputted) in list form with
-the original header rows removed and the first column of values (transaction ids) removed as well.")
-
-(defparameter *output-table*
-  (cons *input-headers* *input-table*)
-  "Contains the result of combining the new *input-headers* with *input-table*
-(the latter having its original headers removed).")
-
-(defun barf-test ()
-  (cl-csv:write-csv *output-table* :stream #P"../tests/example-output-file.csv"))
-
-(defun cli/options ()
-  "Returns a list of options for our main command"
+(defun top-level/options ()
+  "Creates and returns the options for the top-level command"
   (list
    (clingon:make-option
-    :string
-    :description ".csv file to input"
-    :short-name #\i
-    :long-name "input-file"
-    :key :input-file)
+    :counter
+    :description "verbosity level"
+    :short-name #\v
+    :long-name "verbose"
+    :key :verbose)
    (clingon:make-option
     :string
-    :description "file to output converted .csv to"
-    :short-name #\o
-    :long-name "output-file"
-    :key :output-file)))
+    :description "user to greet"
+    :short-name #\u
+    :long-name "user"
+    :initial-value "stranger"
+    :env-vars '("USER")
+    :key :user)))
 
-(defun cli/handler (cmd)
-  "The handler function of our top-level command"
-  (let ((free-args (clingon:command-arguments cmd))
-        (input-file (clingon:getopt cmd :input-file)))
-    (format t "INPUT FILE IS: ~a!~%" input-file)
-    (format t "You have provided ~a more free arguments~%" (length free-args))
-    (format t "Bye!~%")
-    (uiop:quit)))
+(defun top-level/handler (cmd)
+  (let ((args (clingon:command-arguments cmd))
+        (user (clingon:getopt cmd :user))
+        (verbose (clingon:getopt cmd :verbose)))
+    (format T "Hello, ~A!~%" user)
+    (format T "The current verbosity level is set to ~A~%" verbose)
+    (format T "You have provided ~A arguments~%" (length args))
+    (format T "Bye!~%")))
 
-(defun cli/command ()
-  "A command to convert a file"
+(defun top-level/command ()
   (clingon:make-command
-   :name "convert"
-   :description "convert a file"
-   :version "0.0.1"
-   :authors '("Chu the Pup <chufilthymutt@gmail.com>")
-   :license "GNU GPL-3.0"
-   :options (cli/options)
-   :handler #'cli/handler))
+    :name "magischeschwein"
+    :description "FIXME"
+    :version "0.0.1"
+    :license "GNU GPL v3"
+    :authors '("Chu the Pup <chufilthymutt@gmail.com>")
+    :usage "[-v] [-u <USER>]"
+    :options (top-level/options)
+    :handler #'top-level/handler
+    :sub-commands (list (shout/command))))
 
 (defun main ()
-  "Entry point for the executable.
-  Reads command line arguments."
-  ;; uiop:command-line-arguments returns a list of arguments (sans the script name).
-  ;; We defer the work of parsing to %main because we call it also from the Roswell script.
-  (clingon:run (cli/command)))
+  (let ((app (top-level/command)))
+    (clingon:run app)))
