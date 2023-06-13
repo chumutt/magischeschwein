@@ -21,20 +21,15 @@ the original header rows removed and the first column of values (transaction ids
 (defun cli/options ()
   "Returns a list of options for our main command"
   (list
-   ;; (clingon:make-option
-   ;;  :flag
-   ;;  :description "short help."
-   ;;  :short-name #\h
-   ;;  :key :help)
    (clingon:make-option
-    :string              ;; <--- string type: expects one parameter on the CLI.
+    :string
     :description ".csv file to input"
     :short-name #\i
     :long-name "input-file"
     :key :input-file)
    (clingon:make-option
-    :string              ;; <--- string type: expects one parameter on the CLI.
-    :description "file to output to"
+    :string
+    :description "file to output converted .csv to"
     :short-name #\o
     :long-name "output-file"
     :key :output-file)))
