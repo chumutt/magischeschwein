@@ -21,34 +21,38 @@ the original header rows removed and the first column of values (transaction ids
 (defun cli/options ()
   "Returns a list of options for our main command"
   (list
-   (clingon:make-option
-    :flag
-    :description "short help."
-    :short-name #\h
-    :key :help)
+   ;; (clingon:make-option
+   ;;  :flag
+   ;;  :description "short help."
+   ;;  :short-name #\h
+   ;;  :key :help)
    (clingon:make-option
     :string              ;; <--- string type: expects one parameter on the CLI.
-    :description "Name to greet"
-    :short-name #\n
-    :long-name "name"
-    :env-vars '("USER")
-    :initial-value "lisper"
-    :key :name)))
+    :description ".csv file to input"
+    :short-name #\i
+    :long-name "input-file"
+    :key :input-file)
+   (clingon:make-option
+    :string              ;; <--- string type: expects one parameter on the CLI.
+    :description "file to output to"
+    :short-name #\o
+    :long-name "output-file"
+    :key :output-file)))
 
 (defun cli/handler (cmd)
   "The handler function of our top-level command"
   (let ((free-args (clingon:command-arguments cmd))
-        (name (clingon:getopt cmd :name)))
-    (format t "Hello, ~a!~%" name)
+        (input-file (clingon:getopt cmd :input-file)))
+    (format t "INPUT FILE IS: ~a!~%" input-file)
     (format t "You have provided ~a more free arguments~%" (length free-args))
     (format t "Bye!~%")
     (uiop:quit)))
 
 (defun cli/command ()
-  "A command to say hello to someone"
+  "A command to convert a file"
   (clingon:make-command
-   :name "hello"
-   :description "say hello"
+   :name "convert"
+   :description "convert a file"
    :version "0.0.1"
    :authors '("Chu the Pup <chufilthymutt@gmail.com>")
    :license "GNU GPL-3.0"
