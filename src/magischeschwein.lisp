@@ -1,5 +1,7 @@
 (in-package :magischeschwein)
 
+(defparameter *temporary-file* #P"/tmp/magischeschwein.tmp")
+
 (defparameter *date-format*
   '((:month 2) #\/ (:day 2) #\/ (:year 4)))
 
@@ -9,7 +11,7 @@
 
 (defparameter *ledger-cli-args* '("ledger"
                                    "convert"
-                                   'NIL
+                                   "/tmp/magischeschwein.tmp"
                                    "--input-date-format"
                                    "%m/%d/%Y"
                                    "--invert"
@@ -17,7 +19,7 @@
                                    "assets:checking"
                                    "--rich-data"
                                    "--now"
-                                   'NIL))
+                                   NIL))
 
 (defun replace-at-index (lst index new-value)
   (if (zerop index)
@@ -32,11 +34,12 @@
   (replace-at-index lst 10 datespec))
 
 (defun with-cli-args (csvin)
-  (let ((lst1 (csvin-to-cli-args *ledger-cli-args* csvin)))
+  (let ((lst1 (csvin-to-cli-args *ledger-cli-args* (uiop:native-namestring csvin))))
     (let ((lst2 (current-date-to-cli-args lst1 *todays-date*)))
       lst2)))
 
-(with-cli-args #P"/home/pee/poo")
+(defun ledger-convert (csvin)
+  (uiop:run-program (with-cli-args csvin) :output T))
 
 (defun with-new-headers (lst)
   (cons *new-headers* lst))
@@ -52,7 +55,9 @@
 
 (defun top-level/handler (cmd)
   (let ((input-file (clingon:getopt cmd :input-file)))
-    (cl-csv:write-csv (process-csv input-file) :stream *standard-output*)))
+    (prog2
+      (cl-csv:write-csv (process-csv input-file) :stream *temporary-file*)
+      (ledger-convert *temporary-file*))))
 
 (defun top-level/options ()
   (list
@@ -62,7 +67,6 @@
     :short-name #\i
     :long-name "input-file"
     :key :input-file)))
-
 
 (defun top-level/command ()
   (clingon:make-command
