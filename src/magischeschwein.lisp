@@ -11,15 +11,15 @@
 
 (defparameter *ledger-cli-args* '("ledger"
                                    "convert"
-                                   "/tmp/magischeschwein.tmp"
+                                   'NIL
                                    "--input-date-format"
-                                   "%m/%d/%Y"
+                                   "\"%m/%d/%Y\" "
                                    "--invert"
                                    "--account"
                                    "assets:checking"
                                    "--rich-data"
                                    "--now"
-                                   NIL))
+                                   'NIL))
 
 (defun replace-at-index (lst index new-value)
   (if (zerop index)
