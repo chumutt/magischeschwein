@@ -1,4 +1,3 @@
-
 (load "magischeschwein.asd")
 (load "magischeschwein-tests.asd")
 

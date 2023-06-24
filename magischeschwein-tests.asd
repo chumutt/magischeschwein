@@ -1,4 +1,5 @@
 (in-package :asdf-user)
+
 (defsystem "magischeschwein-tests"
   :description "Test suite for the magischeschwein system"
   :author "Chu the Pup <chufilthymutt@gmail.com>"
@@ -8,9 +9,9 @@
                :cl-csv
                :clingon)
   :license "GNU GPL-3.0"
-  :serial t
+  :serial T
   :components ((:module "tests"
-                        :serial t
+                        :serial T
                         :components ((:file "packages")
                                      (:file "test-magischeschwein")))))
 

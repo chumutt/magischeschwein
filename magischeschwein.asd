@@ -10,7 +10,10 @@
   :source-control (:git "")
 
   ;; Dependencies.
-  :depends-on (:cl-csv :clingon)
+  :depends-on (:cl-csv
+               :clingon
+               :local-time
+               :str)
 
   ;; Project stucture.
   :serial T
