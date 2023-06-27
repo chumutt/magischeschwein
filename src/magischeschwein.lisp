@@ -9,17 +9,26 @@
     :format *ledger-cli-date-format*))
 
 (defparameter *new-headers*
-  '("date,payee,note,debit,credit,,code,"))
+  "date,payee,note,debit,credit,,code,")
+
+(defparameter *temporary-headers-filename*
+  "magischeschwein-headers.tmp")
+
+(defun temp-filename (filename)
+  (uiop:merge-pathnames* filename (uiop:temporary-directory)))
+
+(defparameter *temporary-headers-filepath*
+  (temp-filename *temporary-headers-filename*))
 
 (defun top-level/options ()
   (list
     (clingon:make-option
-       :filepath
-       :description
+      :filepath
+      :description
       "the input csv file you want to convert"
-       :short-name #\i
-       :long-name "input-file"
-       :key :input-file)
+      :short-name #\i
+      :long-name "input-file"
+      :key :input-file)
     (clingon:make-option
       :filepath
       :description
@@ -40,22 +49,41 @@
       :description "verbosity level"
       :short-name #\v
       :long-name "verbose"
-      :key :verbose)))
+      :key :verbose
+      :initial-value 0)))
+
+(defun is-file-real? (filepath)
+  (if (uiop:file-exists-p filepath)
+    "YES"
+    "NO"))
+
+(defun be-verbose-about (input-file journal-file account-name verbosity)
+  (format T "input-file: ~a~%journal-file: ~a~%account-name: ~a~%verbosity: ~a~%"
+    input-file
+    journal-file
+    account-name
+    verbosity)
+  (format T "input-file real?: ~a~%" (is-file-real? input-file)))
+
+
+(defun write-new-headers-to (stream)
+  (format stream "~a" *new-headers*))
+
+(defun write-headers-to-temp-file ()
+  (with-open-file (s *temporary-headers-filepath*
+                    :direction :output
+                    :if-exists :supersede
+                    :if-does-not-exist :create)
+    (write-new-headers-to s)))
 
 (defun top-level/handler (cmd)
   (let ((input-file   (clingon:getopt cmd :input-file))
         (journal-file (clingon:getopt cmd :journal-file))
         (account-name (clingon:getopt cmd :account-name))
         (verbosity    (clingon:getopt cmd :verbose)))
-    (let* ((input-pathname (pathname input-file))
-           (input-csv (cl-csv:read-csv input-pathname))
-           (csv-sans-headers (cddddr input-csv))
-           (csv-sans-1st-col (mapcar #'cdr csv-sans-headers))
-           (csv-with-new-headers (cons *new-headers* csv-sans-1st-col)))
-      (cl-csv:write-csv
-        (cl-csv:read-csv
-          (cl-csv:write-csv csv-with-new-headers))
-        :stream #P"/tmp/magischeschwein.tmp"))))
+    (when (= verbosity 1)
+      (be-verbose-about input-file journal-file account-name verbosity))
+    (write-headers-to-temp-file)))
 
 (defun top-level/command ()
   (clingon:make-command
