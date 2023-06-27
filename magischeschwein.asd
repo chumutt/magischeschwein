@@ -2,7 +2,7 @@
 
 (defsystem "magischeschwein"
   :author "Chu the Pup <chufilthymutt@gmail.com>"
-  :version "0.0.1"
+  :version "0.0.2"
   :license "GNU GPL-3.0"
   :description "csv to ledger converter for first farmers and merchants bank"
   :homepage ""
