@@ -12,8 +12,7 @@
   ;; Dependencies.
   :depends-on (:cl-csv
                :clingon
-               :local-time
-               :str)
+               :local-time)
 
   ;; Project stucture.
   :serial T
