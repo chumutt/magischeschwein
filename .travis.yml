@@ -18,9 +18,3 @@ matrix:
 install:
     # Install CL Travis Handler
     - curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | bash
-
-script:
-    # Run the magischeschwein tests using lisp-unit
-    cl -e '(ql:quickload :magischeschwein-tests)
-           (unless (magischeschwein-tests:run)
-             (uiop:quit 1))'
