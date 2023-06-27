@@ -12,13 +12,29 @@
   "date,payee,note,debit,credit,,code,")
 
 (defparameter *temporary-headers-filename*
-  "magischeschwein-headers.tmp")
+  "magischeschwein-csv-headers.tmp")
+
+(defparameter *temporary-csv-filename*
+  "magischeschwein-csv-body.tmp")
+
+(defparameter *temporary-filename*
+  "magischeschwein.tmp")
 
 (defun temp-filename (filename)
-  (uiop:merge-pathnames* filename (uiop:temporary-directory)))
+  (uiop:merge-pathnames* filename
+    (uiop:temporary-directory)))
 
 (defparameter *temporary-headers-filepath*
   (temp-filename *temporary-headers-filename*))
+
+(defparameter *temporary-csv-filepath*
+  (temp-filename *temporary-csv-filename*))
+
+(defparameter *temporary-file-filepath*
+  (temp-filename *temporary-filename*))
+
+(defparameter *temporary-file-filepath-string*
+  (uiop:native-namestring (temp-filename *temporary-filename*)))
 
 (defun top-level/options ()
   (list
@@ -65,7 +81,6 @@
     verbosity)
   (format T "input-file real?: ~a~%" (is-file-real? input-file)))
 
-
 (defun write-new-headers-to (stream)
   (format stream "~a" *new-headers*))
 
@@ -76,14 +91,89 @@
                     :if-does-not-exist :create)
     (write-new-headers-to s)))
 
+(defun convert-input-csv (input-file)
+  (cl-csv:write-csv
+    (cddddr
+      (mapcar 'cdr
+        (cl-csv:read-csv input-file)))))
+
+(defun write-converted-input-csv-to (stream input-file)
+  (format stream "~a" (convert-input-csv (pathname input-file))))
+
+(defun write-converted-input-csv-to-temp-file (input-file)
+  (with-open-file (s *temporary-csv-filepath*
+                    :direction :output
+                    :if-exists :supersede
+                    :if-does-not-exist :create)
+    (write-converted-input-csv-to s input-file)))
+
+(defun read-csv-headers ()
+  (cl-csv:read-csv *temporary-headers-filepath*))
+
+(defun read-converted-csv-body ()
+  (cl-csv:read-csv *temporary-csv-filepath*))
+
+(defun combine-headers-and-csv ()
+  (cons
+    (car (read-csv-headers))
+    (read-converted-csv-body)))
+
+(defun write-combined-headers-and-csv (stream)
+  (cl-csv:write-csv
+    (combine-headers-and-csv)
+    :stream stream))
+
+(defun write-combined-headers-and-csv-to-temp-file ()
+  (with-open-file (s *temporary-file-filepath*
+                    :direction :output
+                    :if-exists :supersede
+                    :if-does-not-exist :create)
+    (write-combined-headers-and-csv s)))
+
+(defun ledger (journal-file account-name)
+  (uiop:run-program (list
+                      "ledger"
+                      "convert"
+                      *temporary-file-filepath-string*
+                      "-f"
+                      journal-file
+                      "--input-date-format"
+                      "%m/%d/%Y"
+                      "--invert"
+                      "--account"
+                      account-name
+                      "--rich-data"
+                      "--now"
+                      *todays-date*)
+    :output :string
+    :error-output :string))
+
+
+(defun write-temp-files (input-file)
+  (write-headers-to-temp-file)
+  (write-converted-input-csv-to-temp-file input-file)
+  (write-combined-headers-and-csv-to-temp-file))
+
+(defun cleanup-temp-files ()
+  (uiop:delete-file-if-exists *temporary-headers-filepath*)
+  (uiop:delete-file-if-exists *temporary-csv-filepath*)
+  (uiop:delete-file-if-exists *temporary-file-filepath*))
+
 (defun top-level/handler (cmd)
   (let ((input-file   (clingon:getopt cmd :input-file))
         (journal-file (clingon:getopt cmd :journal-file))
         (account-name (clingon:getopt cmd :account-name))
         (verbosity    (clingon:getopt cmd :verbose)))
     (when (= verbosity 1)
-      (be-verbose-about input-file journal-file account-name verbosity))
-    (write-headers-to-temp-file)))
+      (be-verbose-about
+        input-file
+        journal-file
+        account-name
+        verbosity))
+    (write-temp-files input-file)
+    (princ
+      (ledger journal-file account-name))
+    (cleanup-temp-files)))
 
 (defun top-level/command ()
   (clingon:make-command
@@ -92,7 +182,7 @@
     :version "0.0.1"
     :license "GNU GPL-3.0"
     :authors '("Chu the Pup <chufilthymutt@gmail.com>")
-    :usage "[-v] [-i <input-file.csv>] [-j <your-journal.dat>]"
+    :usage "[-i <input-file.csv>] [-j <your-journal.dat>] [-a \"account:name\"] [-v] [--help]"
     :options (top-level/options)
     :handler #'top-level/handler))
 
