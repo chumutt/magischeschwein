@@ -179,7 +179,7 @@
   (clingon:make-command
     :name "magischeschwein"
     :description "csv to ledger converter for first farmers and merchants bank"
-    :version "0.0.1"
+    :version "0.0.2"
     :license "GNU GPL-3.0"
     :authors '("Chu the Pup <chufilthymutt@gmail.com>")
     :usage "[-i <input-file.csv>] [-j <your-journal.dat>] [-a \"account:name\"] [-v] [--help]"
