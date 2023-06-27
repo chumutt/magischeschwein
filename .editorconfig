@@ -1,0 +1,32 @@
+### https://editorconfig.org/
+
+# tell it that this is the top-most EditorConfig file
+root = true
+
+# Apply to any text/code file regardless of its format unless otherwise
+# specified (like how [*.md] and [*.org]) are.
+
+[*]
+# use line feed
+end_of_line = lf
+
+# soft tabs
+indent_style = space
+
+# no. columns used for each level of indentation
+indent_size = 2
+
+# character set
+charset = utf-8
+
+# remove any whitespace characters preceding newline characters
+trim_trailing_whitespace = true
+
+# ensure file ends with a newline when saving
+insert_final_newline = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.org]
+trim_trailing_whitespace = false
